@@ -20,6 +20,8 @@ import { Link } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
+import { IoMdArrowBack } from "react-icons/io";
+import { MdOutlineShoppingCartCheckout } from "react-icons/md";
 
 function Cart() {
   const cartItems = useSelector((state) => state?.cart);
@@ -52,7 +54,7 @@ function Cart() {
       <Navbar />
       <Box
         sx={{
-          backgroundColor: "#3F3F3F", 
+          backgroundColor: "black", 
           minHeight: "100vh",
           display: "flex",
           justifyContent: "center",
@@ -154,6 +156,7 @@ function Cart() {
                   borderColor: "#111",
                   borderRadius: "5px",
                 }}
+                endIcon={<IoMdArrowBack/>}
               >
                 Back to Home
               </Button>
@@ -166,6 +169,7 @@ function Cart() {
                   borderColor: "#111",
                   borderRadius: "5px",
                 }}
+                endIcon={<MdOutlineShoppingCartCheckout/>}
               >
                 Checkout
               </Button>

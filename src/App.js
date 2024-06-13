@@ -28,9 +28,10 @@ function App() {
           <Route path="*" element={<PageNotFound />} />
           <Route
             path="/cart"
-            element={<Cart />}
+            element={currentUser ? <Cart /> : <LoginForm />}
           ></Route>
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile"
+          element={currentUser ? <Profile /> : <LoginForm />} />
           <Route path="/checkout" element={<Checkout/>} />
         </Routes>
       </BrowserRouter>
