@@ -1,31 +1,27 @@
-import React, { useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { TextField, Button, Typography, Box } from "@mui/material";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import bcrypt from "bcryptjs";
 import { useAuth } from "../context/AuthContext";
-
+import { IoMdLogIn } from "react-icons/io";
+import { Link } from 'react-router-dom';
 const LoginForm = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
+  const { register, handleSubmit, formState: { errors } } = useForm();
   const { login } = useAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const onSubmit = async (data) => {
-    const { email, password } = data;
-
-    login(email, password);
-
-    const isLoggedIn = localStorage.getItem("isLoggedIn");
-    if (isLoggedIn === "true") {
-      navigate("/");
+    try {
+      await login(data.email, data.password);
+      toast.success("login succeesfull");
+      const isLoggedIn = localStorage.getItem("isLoggedIn");
+      if (isLoggedIn === "true") {
+        navigate("/");
+      }
+    } catch (error) {
+      toast.error(error.message);
     }
   };
 
@@ -34,7 +30,7 @@ const LoginForm = () => {
       style={{
         width: "100%",
         minHeight: "100vh",
-        backgroundColor: "#3F3F3F",
+        backgroundColor:"black",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -72,7 +68,7 @@ const LoginForm = () => {
           >
             <Typography
               variant="h3"
-              style={{ fontSize: "35px", marginTop: "0" }}
+              style={{ fontSize: "35px", marginBottom: "25px" }}
             >
               Login to Your Account
             </Typography>
@@ -81,8 +77,6 @@ const LoginForm = () => {
               label="Email"
               variant="outlined"
               fullWidth
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
               error={!!errors.email}
               helperText={errors.email?.message}
             />
@@ -93,8 +87,6 @@ const LoginForm = () => {
               variant="outlined"
               type="password"
               fullWidth
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
               error={!!errors.password}
               helperText={errors.password?.message}
             />
@@ -113,10 +105,16 @@ const LoginForm = () => {
                 cursor: "pointer",
                 margin: "10px",
               }}
+              endIcon={<IoMdLogIn/>}
             >
               Login
             </Button>
           </form>
+          <Box>
+            <Typography>
+              Don`t have an account ? <Link to="/signup">Signup</Link>
+            </Typography>
+      </Box>
         </Box>
         <Box
           style={{
@@ -131,12 +129,7 @@ const LoginForm = () => {
             padding: "24px",
           }}
         >
-          <Typography
-            variant="h3"
-            style={{ fontSize: "40px", color: "white", marginTop: "0" }}
-          >
-            Login
-          </Typography>
+          <img src="https://knowledgemission.kerala.gov.in/img/official-login.jpg" alt="Signup" style={{ maxWidth: "100%", maxHeight: "100%" }} />
         </Box>
       </Box>
     </Box>

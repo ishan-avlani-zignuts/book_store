@@ -1,21 +1,16 @@
-
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { TextField, Button, Typography, Box } from "@mui/material";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import bcrypt from "bcryptjs";
-import { useAuth } from "../context/AuthContext"; 
+import { useAuth } from "../context/AuthContext";
+import { IoMdLogIn } from "react-icons/io";
+import { Link } from 'react-router-dom';
 
 const SignupForm = () => {
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm();
-  const { signup } = useAuth(); 
+  const { register, handleSubmit, watch, formState: { errors } } = useForm();
+  const { signup } = useAuth();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -28,26 +23,26 @@ const SignupForm = () => {
 
   const onSubmit = async (data) => {
     try {
-      await signup(data); 
-      navigate("/login"); 
+      await signup(data);
+      toast.success("Account created successfully. Please log in.");
+      navigate("/login");
     } catch (error) {
-      
-      console.error("Signup Error:", error);
+      toast.error("An error occurred during signup. Please try again.");
     }
   };
 
   return (
-        <Box
+    <Box
       style={{
         width: "100%",
         minHeight: "100vh",
-        backgroundColor: "#3F3F3F",
+        backgroundColor: "black",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
       }}
     >
-      <ToastContainer />
+     
       <Box
         style={{
           width: "900px",
@@ -56,6 +51,7 @@ const SignupForm = () => {
           borderRadius: "10px",
         }}
       >
+         <ToastContainer />
         <Box
           style={{
             flex: 2,
@@ -77,10 +73,7 @@ const SignupForm = () => {
               alignItems: "center",
             }}
           >
-            <Typography
-              variant="h3"
-              style={{ fontSize: "35px", marginTop: "0" }}
-            >
+            <Typography variant="h3" style={{ fontSize: "35px", marginBottom: "25px" }}>
               Create Your Account
             </Typography>
             <TextField
@@ -89,9 +82,7 @@ const SignupForm = () => {
               variant="outlined"
               fullWidth
               value={formData.firstName}
-              onChange={(e) =>
-                setFormData({ ...formData, firstName: e.target.value })
-              }
+              onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
               error={!!errors.firstName}
               helperText={errors.firstName?.message}
             />
@@ -102,9 +93,7 @@ const SignupForm = () => {
               variant="outlined"
               fullWidth
               value={formData.lastName}
-              onChange={(e) =>
-                setFormData({ ...formData, lastName: e.target.value })
-              }
+              onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
               error={!!errors.lastName}
               helperText={errors.lastName?.message}
             />
@@ -115,9 +104,7 @@ const SignupForm = () => {
               variant="outlined"
               fullWidth
               value={formData.email}
-              onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
-              }
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               error={!!errors.email}
               helperText={errors.email?.message}
             />
@@ -128,9 +115,7 @@ const SignupForm = () => {
               variant="outlined"
               fullWidth
               value={formData.mobile}
-              onChange={(e) =>
-                setFormData({ ...formData, mobile: e.target.value })
-              }
+              onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
               error={!!errors.mobile}
               helperText={errors.mobile?.message}
             />
@@ -142,9 +127,7 @@ const SignupForm = () => {
               type="password"
               fullWidth
               value={formData.password}
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               error={!!errors.password}
               helperText={errors.password?.message}
             />
@@ -152,17 +135,14 @@ const SignupForm = () => {
             <TextField
               {...register("confirmPassword", {
                 required: "Confirm Password is required",
-                validate: (value) =>
-                  value === watch("password") || "Passwords do not match",
+                validate: (value) => value === watch("password") || "Passwords do not match",
               })}
               label="Confirm Password"
               variant="outlined"
               type="password"
               fullWidth
               value={formData.confirmPassword}
-              onChange={(e) =>
-                setFormData({ ...formData, confirmPassword: e.target.value })
-              }
+              onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
               error={!!errors.confirmPassword}
               helperText={errors.confirmPassword?.message}
             />
@@ -181,10 +161,16 @@ const SignupForm = () => {
                 cursor: "pointer",
                 margin: "10px",
               }}
+              endIcon={<IoMdLogIn/>}
             >
               Sign Up
             </Button>
           </form>
+          <Box>
+            <Typography>
+              Already have an account ? <Link to="/login">Login</Link>
+            </Typography>
+          </Box>
         </Box>
         <Box
           style={{
@@ -199,12 +185,7 @@ const SignupForm = () => {
             padding: "24px",
           }}
         >
-          <Typography
-            variant="h3"
-            style={{ fontSize: "40px", color: "white", marginTop: "0" }}
-          >
-            Sign Up
-          </Typography>
+          <img src="https://cdni.iconscout.com/illustration/premium/thumb/sign-up-8694031-6983270.png?f=webp" alt="Signup" style={{ maxWidth: "100%", maxHeight: "100%" }} />
         </Box>
       </Box>
     </Box>

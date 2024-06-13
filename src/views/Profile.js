@@ -1,10 +1,14 @@
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { TextField, Button, Typography, Box } from "@mui/material";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useAuth } from "../context/AuthContext";
 import bcrypt from "bcryptjs";
+import { useNavigate } from "react-router-dom";
+import { RxUpdate } from "react-icons/rx";
+import { FcCancel } from "react-icons/fc";
+import { Link } from 'react-router-dom';
 
 const Profile = () => {
   const { currentUser, updateUserProfile, updatePassword } = useAuth();
@@ -12,6 +16,7 @@ const Profile = () => {
     register,
     handleSubmit,
     setValue,
+    reset,
     watch,
     formState: { errors },
   } = useForm();
@@ -24,16 +29,12 @@ const Profile = () => {
       setValue("mobile", currentUser.mobile);
     }
   }, [currentUser, setValue]);
-
+  const navigate = useNavigate();
   const onSubmit = async (data) => {
-    const { currentPassword, newPassword, confirmPassword, ...profileData } =
-      data;
+    const { currentPassword, newPassword, confirmPassword, ...profileData } = data;
 
     if (currentPassword && newPassword) {
-      const isPasswordValid = bcrypt.compareSync(
-        currentPassword,
-        currentUser.hashedPassword
-      );
+      const isPasswordValid = bcrypt.compareSync(currentPassword, currentUser.password);
       if (!isPasswordValid) {
         toast.error("Invalid current password.");
         return;
@@ -43,17 +44,15 @@ const Profile = () => {
         toast.error("New passwords do not match.");
         return;
       }
-      const hashedPassword = bcrypt.hashSync(newPassword, 10);
-      updatePassword(hashedPassword);
 
-      updateUserProfile(profileData);
-
-      toast.success("Profile updated successfully.", { duration: 2000 });
-    } else {
-      updateUserProfile(profileData);
-
-      toast.success("Profile updated successfully.", { duration: 2000 });
+      await updatePassword(newPassword);
     }
+
+    await updateUserProfile(profileData);
+    toast.success("Profile updated successfully.", { duration: 2000 });
+    
+    navigate("/");
+    reset();
   };
 
   return (
@@ -67,15 +66,17 @@ const Profile = () => {
         justifyContent: "center",
       }}
     >
+      <ToastContainer />
       <Box
         style={{
           width: "600px",
           padding: "24px",
           borderRadius: "10px",
+          border:"1px solid black",
           backgroundColor: "white",
         }}
       >
-        <Typography variant="h4" style={{ marginBottom: "20px" }}>
+        <Typography variant="h4" style={{ marginBottom: "20px", textAlign:"center" }}>
           Update Profile
         </Typography>
         <form
@@ -84,7 +85,6 @@ const Profile = () => {
         >
           <TextField
             {...register("firstName", { required: "First Name is required" })}
-            label="First Name"
             variant="outlined"
             fullWidth
             defaultValue={currentUser?.firstName}
@@ -94,7 +94,6 @@ const Profile = () => {
           />
           <TextField
             {...register("lastName", { required: "Last Name is required" })}
-            label="Last Name"
             variant="outlined"
             fullWidth
             defaultValue={currentUser?.lastName}
@@ -104,7 +103,6 @@ const Profile = () => {
           />
           <TextField
             {...register("email", { required: "Email is required" })}
-            label="Email"
             variant="outlined"
             fullWidth
             defaultValue={currentUser?.email}
@@ -114,7 +112,6 @@ const Profile = () => {
           />
           <TextField
             {...register("mobile", { required: "Mobile Number is required" })}
-            label="Mobile Number"
             variant="outlined"
             fullWidth
             defaultValue={currentUser?.mobile}
@@ -144,8 +141,7 @@ const Profile = () => {
           />
           <TextField
             {...register("confirmPassword", {
-              validate: (value) =>
-                value === watch("newPassword") || "Passwords do not match",
+              validate: (value) => value === watch("newPassword") || "Passwords do not match",
             })}
             label="Confirm New Password"
             type="password"
@@ -155,14 +151,29 @@ const Profile = () => {
             helperText={errors.confirmPassword?.message}
             style={{ marginBottom: "10px" }}
           />
+          <Box sx={{display:"flex", justifyContent:"space-between"}}>
           <Button
             type="submit"
             variant="contained"
             color="primary"
             style={{ padding: "12px", marginTop: "20px" }}
+            endIcon={<RxUpdate/>}
           >
             Update Profile
           </Button>
+          <Link to="/">
+          <Button
+            variant="contained"
+            color="primary"
+            style={{ padding: "12px", marginTop: "20px" }}
+            endIcon={<FcCancel/>}
+          >
+            Cancel
+          </Button>
+          </Link>
+          
+          </Box>
+          
         </form>
       </Box>
     </Box>
